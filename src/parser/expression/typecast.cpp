@@ -34,6 +34,4 @@ namespace expression
             this->to_cast = nullptr;
         }
     }
-
-    typecast::~typecast() {}
 }

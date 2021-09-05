@@ -29,5 +29,6 @@ namespace expression
         list_expression(std::vector<std::unique_ptr<expression_base>>& list_members, enumerations::primitive_type list_type);
         list_expression(std::unique_ptr<expression_base> arg, enumerations::primitive_type list_type);
         list_expression();
+        virtual ~list_expression() = default;
     };   
 }

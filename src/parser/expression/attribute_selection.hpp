@@ -33,6 +33,6 @@ namespace expression
         attribute_selection(std::unique_ptr<expression_base>&& selected, const std::string& attribute_name);
         attribute_selection(std::unique_ptr<binary>&& to_deconstruct);
         attribute_selection(std::unique_ptr<expression_base>&& selected, enumerations::attribute attrib, const data_type& t);
-        virtual ~attribute_selection() override;
+        virtual ~attribute_selection() = default;
     };
 }

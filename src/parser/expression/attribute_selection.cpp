@@ -102,6 +102,4 @@ namespace expression
         : selected(std::move(selected))
         , attrib(attrib)
         , t(t) { }
-    
-    attribute_selection::~attribute_selection() {}
 }

@@ -17,6 +17,4 @@ namespace expression
     {
         this->_expression_type = enumerations::expression_type::CALL_EXP;
     }
-
-    call::~call() {}
 }

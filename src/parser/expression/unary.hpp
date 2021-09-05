@@ -20,6 +20,6 @@ namespace expression
 
         unary(std::unique_ptr<expression_base> operand, enumerations::exp_operator op);
         unary();
-        virtual ~unary() override;
+        virtual ~unary() = default;
     };
 }

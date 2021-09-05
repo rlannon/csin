@@ -23,6 +23,6 @@ namespace expression
         typecast(std::unique_ptr<expression_base> to_cast, const data_type& new_type);
         typecast(std::unique_ptr<binary> b);
 
-        virtual ~typecast() override;
+        virtual ~typecast() = default;
     };
 }

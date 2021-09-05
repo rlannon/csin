@@ -10,7 +10,7 @@ namespace expression
         return *this->operand.get();
     }
 
-    unary::unary(std::unique_ptr<expression_base> operand, exp_operator op)
+    unary::unary(std::unique_ptr<expression_base> operand, enumerations::exp_operator op)
         : expression_base(enumerations::expression_type::UNARY)
         , operand(std::move(operand))
         , op(op) { }
@@ -18,6 +18,4 @@ namespace expression
     unary::unary(): expression_base(enumerations::expression_type::UNARY) {
         this->op = enumerations::exp_operator::NO_OP;
     }
-
-    unary::~unary() {}
 }

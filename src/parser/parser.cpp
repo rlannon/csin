@@ -16,7 +16,7 @@ statement::statement_block parser::create_ast() {
 
 	// creating an empty lexeme will allow us to test if the current token has nothing in it
 	// sometimes, the lexer will produce a null lexeme, so we want to skip over it if we find one
-	lexeme null_lexeme(NULL_LEXEME, "", 0);
+	lexeme null_lexeme(enumerations::lexeme_type::NULL_LEXEME, "", 0);
 
 	// Parse a token file
 	// While we are within the program and we have not reached the end of a procedure block, keep parsing
@@ -58,7 +58,7 @@ parser::parser(const std::string& filename)
 	// create a lexer
 	std::ifstream infile;
 	infile.open(filename, std::ios::in);
-	Lexer lexer(infile);
+	lexer lexer(infile);
 
 	// Tokenize the file
 	std::cout << "Lexing..." << std::endl;

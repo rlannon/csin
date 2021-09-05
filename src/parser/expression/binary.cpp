@@ -35,6 +35,4 @@ namespace expression
     binary::binary()
         : expression_base(enumerations::expression_type::BINARY)
         , op(enumerations::exp_operator::NO_OP) { }
-
-    binary::~binary() {}
 }

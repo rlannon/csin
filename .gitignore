@@ -7,7 +7,7 @@ samples/*.h
 
 # Ignore object files and executables
 *.o
-sinx86
+csin
 a.out
 
 # ignore main.cpp on this branch

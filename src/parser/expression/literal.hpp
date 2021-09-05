@@ -31,6 +31,6 @@ namespace expression
                 enumerations::primitive_type subtype = enumerations::primitive_type::NONE);
         literal(const data_type& t, const std::string& value);
         literal();
-        virtual ~literal() override;
+        virtual ~literal() = default;
     };
 }

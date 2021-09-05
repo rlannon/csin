@@ -27,5 +27,6 @@ namespace expression
         keyword(const std::string& kwd);
         keyword(const data_type& t);
         keyword(const data_type& t, const std::string& kwd);
+        virtual ~keyword() = default;
     };
 }

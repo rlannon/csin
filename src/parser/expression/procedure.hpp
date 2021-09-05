@@ -26,6 +26,6 @@ namespace expression
         procedure(procedure& other);
         procedure(std::unique_ptr<expression_base> proc_name, std::unique_ptr<expression_base> proc_args);
         procedure();
-        virtual ~procedure() override;
+        virtual ~procedure() = default;
     };
 }

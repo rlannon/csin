@@ -39,6 +39,6 @@ namespace expression
                 const enumerations::exp_operator op);
         binary();
 
-        virtual ~binary() override;
+        virtual ~binary() = default;
     };
 }

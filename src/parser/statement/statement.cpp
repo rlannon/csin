@@ -28,4 +28,6 @@ namespace statement
     statement_base::statement_base(const enumerations::statement_type type, const unsigned int line_number)
         : _type(type)
         , _line(line_number) {}
+    
+    statement_base::~statement_base() {}
 }

@@ -22,5 +22,6 @@ namespace expression
 
         indexed(std::unique_ptr<expression_base> to_index, std::unique_ptr<expression_base> index_value);
         indexed();
+        virtual ~indexed() = default;
     };
 }

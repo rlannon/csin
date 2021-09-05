@@ -48,6 +48,4 @@ namespace expression
     literal::literal(): expression_base(enumerations::expression_type::LITERAL) {
         this->type = data_type();
     }
-
-    literal::~literal() {}
 }

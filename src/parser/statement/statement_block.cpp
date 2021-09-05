@@ -3,7 +3,7 @@
 namespace statement
 {
     statement_block::statement_block()
-        : statement_list({})
+        : statements_list({})
         , has_return(false) { }
 
     statement_block::~statement_block() { }

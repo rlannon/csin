@@ -10,6 +10,6 @@ namespace expression
         call(procedure *proc);
         call(call& other);
         call();
-        virtual ~call() override;
+        virtual ~call() = default;
     };
 }

@@ -39,6 +39,4 @@ namespace expression
         : expression_base(enumerations::expression_type::PROC_EXP)
         , name(nullptr)
         , args(nullptr) { }
-
-    procedure::~procedure() { }
 }

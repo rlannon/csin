@@ -19,5 +19,6 @@ namespace expression
 
         identifier(const std::string& value);
         identifier();
+        virtual ~identifier() = default;
     };
 }
