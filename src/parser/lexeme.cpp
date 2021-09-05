@@ -1,12 +1,4 @@
-/*
-
-SIN Toolchain
-lexeme.cpp
-Copyright 2020 Riley Lannon
-
-*/
-
-#include "lexeme.h"
+#include "lexeme.hpp"
 
 bool lexeme::operator==(const lexeme& b) {
     // allow lexemes to be compared with the == operator

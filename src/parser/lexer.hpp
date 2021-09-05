@@ -12,7 +12,7 @@
 #include <exception>
 #include <unordered_map>
 
-#include "lexeme.h"
+#include "lexeme.hpp"
 #include "../util/exceptions.hpp"
 
 class lexer
