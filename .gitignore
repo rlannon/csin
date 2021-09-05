@@ -1,0 +1,24 @@
+# VSCode settings should be ignored
+.vscode/*
+
+# ignore generated code
+samples/*.c
+samples/*.h
+
+# Ignore object files and executables
+*.o
+sinx86
+a.out
+
+# ignore main.cpp on this branch
+main.cpp
+
+# Visual Studio files
+*.sln
+Debug/*
+*.exe
+*.vcxproj*
+.vs/*
+x64/*
+*.obj
+*.plist
