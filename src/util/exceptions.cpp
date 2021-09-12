@@ -119,7 +119,7 @@ namespace error
 		// Exception should be used when types are incompatible
 	}
 
-	quality_conflict::quality_conflict(std::string &conflicting_quality, unsigned int line) :
+	quality_conflict::quality_conflict(const std::string& conflicting_quality, unsigned int line) :
 		compiler_exception(
 			(
 				"Symbol quality '" + conflicting_quality + "' may not be used here (there is a conflicting quality present)"),
@@ -130,7 +130,7 @@ namespace error
 		// Body not necessary (super called)
 	}
 
-	illegal_quality::illegal_quality(std::string &offending_quality, unsigned int &line) :
+	illegal_quality::illegal_quality(const std::string& offending_quality, unsigned int line) :
 	compiler_exception(
 		("Illegal symbol quality '" + offending_quality + "'"),
 		error_code::ILLEGAL_QUALITY_ERROR,
@@ -277,7 +277,7 @@ namespace error
 		// super called
 	}
 
-	incomplete_type::incomplete_type(const unsigned int &line):
+	incomplete_type::incomplete_type(const unsigned int line):
 		error::compiler_exception(
 			"Incomplete type information",
 			error_code::INCOMPLETE_TYPE_ERROR,
@@ -291,7 +291,7 @@ namespace error
 
 	}
 
-	missing_identifier::missing_identifier(const unsigned int &line) :
+	missing_identifier::missing_identifier(const unsigned int line) :
 	error::compiler_exception(
 		"Expected identifier",
 		error_code::MISSING_IDENTIFIER_ERROR,
@@ -300,7 +300,7 @@ namespace error
 		// super called
 	}
 
-	unexpected_keyword::unexpected_keyword(std::string &offending_keyword, const unsigned int &line) :
+	unexpected_keyword::unexpected_keyword(const std::string& offending_keyword, const unsigned int line) :
 		error::compiler_exception(
 			("Unexpected keyword '" + offending_keyword + "'"),
 			error_code::UNEXPECTED_KEYWORD_ERROR,
@@ -310,7 +310,7 @@ namespace error
 		// Used when a keyword is found, but one is not expected
 	}
 
-	imbalanced_grouping::imbalanced_grouping(const unsigned int &line) :
+	imbalanced_grouping::imbalanced_grouping(const unsigned int line) :
 	error::compiler_exception(
 		"Syntax error; unclosed grouping symbol",
 		error_code::MISSING_GROUPING_SYMBOL_ERROR,
@@ -319,7 +319,7 @@ namespace error
 		// super called
 	}
 
-	invalid_call_syntax::invalid_call_syntax(const unsigned int &line):
+	invalid_call_syntax::invalid_call_syntax(const unsigned int line):
 		error::compiler_exception(
 			"Expected parens enclosing arguments in function call",
 			error_code::MISSING_GROUPING_SYMBOL_ERROR,

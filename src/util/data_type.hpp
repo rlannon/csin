@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+#include <pair>
 #include <cinttypes>
 #include <cstdlib>
-#include <memory>
 
 #include "data_widths.hpp"
 #include "enumerated_types.hpp"
@@ -13,6 +14,11 @@
 
 class data_type
 {
+	static const std::unordered_map<
+		const enumerations::primitive_type,
+		const std::string
+	> _type_strings;
+
 	enumerations::primitive_type primary;	// always has a primary type
 	std::vector<data_type> contained_types;	// tuples can have multiple contained types; will be empty if no subtype exists
 
@@ -91,6 +97,14 @@ public:
 
 	virtual bool must_initialize() const;
     bool must_free() const;
+
+	/**
+	 * Generates the decoration for the given type.
+	 * 
+	 * For example, `int` will generate `i`, but `final tuple<int, int, float &long>`
+	 * would generate `tf:3i&i&fl`.
+	 */
+	std::string decorate() const;
 
     data_type(	enumerations::primitive_type primary, 
 				data_type subtype, 

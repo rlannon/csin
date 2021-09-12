@@ -1,5 +1,7 @@
 #include "symbol_qualities.hpp"
 
+#include <sstream>
+
 const std::unordered_map<std::string, enumerations::symbol_quality> symbol_qualities::quality_strings = {
 	{ "const", enumerations::symbol_quality::CONSTANT },
 	{ "final", enumerations::symbol_quality::FINAL },
@@ -15,17 +17,14 @@ const std::unordered_map<std::string, enumerations::symbol_quality> symbol_quali
 
 bool symbol_qualities::operator==(const symbol_qualities& right) const {
 	return (
-		(this->long_q == right.long_q) &&
-		(this->short_q == right.short_q) &&
-		(this->signed_q == right.signed_q) &&
-		(this->const_q == right.const_q) &&
-		(this->final_q == right.final_q) &&
-		(this->dynamic_q == right.dynamic_q) &&
-		(this->extern_q == right.extern_q) &&
-		(this->c64_con == right.c64_con) &&
-		(this->windows_con == right.windows_con) &&
-		(this->sincall_con == right.sincall_con) &&
-        (this->_managed == right._managed)
+		(this->_qualities[_long_index] == right._qualities[_long_index]) &&
+		(this->_qualities[_short_index] == right._qualities[_short_index]) &&
+		(this->_qualities[_signed_index] == right._qualities[_signed_index]) &&
+		(this->_qualities[_const_index] == right._qualities[_const_index]) &&
+		(this->_qualities[_final_index] == right._qualities[_final_index]) &&
+		(this->_qualities[_dynamic_index] == right._qualities[_dynamic_index]) &&
+		(this->_qualities[_extern_index] == right._qualities[_extern_index]) &&
+		(this->_qualities[_managed_index] == right._qualities[_managed_index])
 	);
 }
 
@@ -35,117 +34,147 @@ bool symbol_qualities::operator!=(const symbol_qualities& right) const {
 
 bool symbol_qualities::is_long() const
 {
-    return long_q;
+    return _qualities[_long_index];
 }
 
 bool symbol_qualities::is_short() const
 {
-    return short_q;
+    return _qualities[_short_index];
 }
 
 bool symbol_qualities::is_const() const
 {
-	return const_q;
+	return _qualities[_const_index];
 }
 
 bool symbol_qualities::is_final() const
 {
-	return final_q;
+	return _qualities[_final_index];
 }
 
 bool symbol_qualities::is_dynamic() const
 {
-	return dynamic_q;
+	return _qualities[_dynamic_index];
 }
 
 bool symbol_qualities::is_static() const
 {
-	return static_q;
+	return _qualities[_static_index];
 }
 
 bool symbol_qualities::is_signed() const
 {
-	return signed_q;
+	return _qualities[_signed_index];
 }
 
 bool symbol_qualities::is_unsigned() const
 {
-	return !signed_q;
+	return !_qualities[_signed_index];
 }
 
 bool symbol_qualities::has_sign_quality() const
 {
-    return signed_q || _listed_unsigned;
+    return _qualities[_signed_index] || _qualities[_listed_unsigned_index];
 }
 
 bool symbol_qualities::is_extern() const
 {
-	return extern_q;
+	return _qualities[_extern_index];
 }
 
 bool symbol_qualities::is_managed() const
 {
-    return _managed;
+    return _qualities[_managed_index];
 }
 
-void symbol_qualities::add_qualities(symbol_qualities to_add) {
-	// combines two SymbolQualities objects
-
-	// todo: refactor how qualities are stored in SymbolQualities so that we can simplify this
-	// todo: quality conflict exceptions
-
-	if (to_add.const_q) this->add_quality(enumerations::symbol_quality::CONSTANT);
-	if (to_add.final_q) this->add_quality(enumerations::symbol_quality::FINAL);
-	if (to_add.static_q) this->add_quality(enumerations::symbol_quality::STATIC);
-	if (to_add.dynamic_q) this->add_quality(enumerations::symbol_quality::DYNAMIC);
-	if (to_add.long_q) this->add_quality(enumerations::symbol_quality::LONG);
-	if (to_add.short_q) this->add_quality(enumerations::symbol_quality::SHORT);
-	if (to_add.signed_q) this->add_quality(enumerations::symbol_quality::SIGNED);
-	if (to_add.is_unsigned()) this->add_quality(enumerations::symbol_quality::UNSIGNED);
-	if (to_add.extern_q) this->add_quality(enumerations::symbol_quality::EXTERN);
-    if (!to_add._managed) this->add_quality(enumerations::symbol_quality::UNMANAGED);
+void symbol_qualities::add_qualities(symbol_qualities to_add)
+{
+	if (to_add._qualities[_const_index])
+		this->add_quality(enumerations::symbol_quality::CONSTANT);
+	
+	if (to_add._qualities[_final_index])
+		this->add_quality(enumerations::symbol_quality::FINAL);
+	
+	if (to_add._qualities[_static_index])
+		this->add_quality(enumerations::symbol_quality::STATIC);
+	
+	if (to_add._qualities[_dynamic_index])
+		this->add_quality(enumerations::symbol_quality::DYNAMIC);
+	
+	if (to_add._qualities[_long_index])
+		this->add_quality(enumerations::symbol_quality::LONG);
+	
+	if (to_add._qualities[_short_index])
+		this->add_quality(enumerations::symbol_quality::SHORT);
+	
+	if (to_add._qualities[_signed_index])
+		this->add_quality(enumerations::symbol_quality::SIGNED);
+	
+	if (to_add.is_unsigned())
+		this->add_quality(enumerations::symbol_quality::UNSIGNED);
+	
+	if (to_add._qualities[_extern_index])
+		this->add_quality(enumerations::symbol_quality::EXTERN);
+    
+	if (!to_add._qualities[_managed_index])
+		this->add_quality(enumerations::symbol_quality::UNMANAGED);
 }
 
 void symbol_qualities::add_quality(enumerations::symbol_quality to_add)
 {
     // Add a single quality to our qualities list
     if (to_add == enumerations::symbol_quality::CONSTANT) {
-        const_q = true;
-
-		// we cannot have final and const together
-		if (final_q) throw std::string("const");	// todo: proper exception type
-    } else if (to_add == enumerations::symbol_quality::FINAL) {
-		final_q = true;
-
-		// we cannot have final and const together
-		if (const_q) throw std::string("final");	// todo: proper exception type
-	} else if (to_add == enumerations::symbol_quality::STATIC) {
-        static_q = true;
-    } else if (to_add == enumerations::symbol_quality::DYNAMIC) {
-        dynamic_q = true;
-    } else if (to_add == enumerations::symbol_quality::SIGNED) {
-        signed_q = true;
-    } else if (to_add == enumerations::symbol_quality::UNSIGNED) {
-        signed_q = false;
+        _qualities[_const_index] = true;
+		if (_qualities[_final_index]) 
+			throw error::quality_conflict("final", 0);
+    }
+	else if (to_add == enumerations::symbol_quality::FINAL) {
+		_qualities[_final_index] = true;
+		if (_qualities[_const_index]) throw error::quality_conflict("const", 0);
+	} 
+	else if (to_add == enumerations::symbol_quality::STATIC) {
+        _qualities[_static_index] = true;
+    }
+	else if (to_add == enumerations::symbol_quality::DYNAMIC) {
+        _qualities[_dynamic_index] = true;
+    }
+	else if (to_add == enumerations::symbol_quality::SIGNED) {
+        _qualities[_signed_index] = true;
+    }
+	else if (to_add == enumerations::symbol_quality::UNSIGNED) {
+        _qualities[_signed_index] = false;
+		_qualities[_listed_unsigned_index] = true;
 	}
 	else if (to_add == enumerations::symbol_quality::LONG) {
-		long_q = true;
-		short_q = false;
+		_qualities[_long_index] = true;
+		_qualities[_short_index] = false;
 	}
 	else if (to_add == enumerations::symbol_quality::SHORT) {
-		long_q = false;
-		short_q = true;
+		_qualities[_long_index] = false;
+		_qualities[_short_index] = true;
 	}
 	else if (to_add == enumerations::symbol_quality::EXTERN) {
-		extern_q = true;
+		_qualities[_extern_index] = true;
 	}
     else if (to_add == enumerations::symbol_quality::UNMANAGED) {
-        _managed = false;
+        _qualities[_managed_index] = false;
     }
 	else {
-		// invalid quality; throw an exception
-		throw error::compiler_exception("Quality conflict");	// todo: proper exception type
+		throw error::illegal_quality("no quality", 0);
 	}
+}
+
+std::string symbol_qualities::decorate() const
+{
+	std::stringstream decorated;
+
+	for (size_t i = 0; i < _qualities.size(); i++)
+	{
+		if (_qualities[i])
+			decorated << _decorations[i];
+	}	
+
+	return decorated.str();
 }
 
 symbol_qualities::symbol_qualities(std::vector<enumerations::symbol_quality> qualities):
@@ -158,34 +187,34 @@ symbol_qualities::symbol_qualities(std::vector<enumerations::symbol_quality> qua
 	{
 		if (*it == enumerations::symbol_quality::CONSTANT)
 		{
-			const_q = true;
+			_qualities[_const_index] = true;
 		}
 		else if (*it == enumerations::symbol_quality::FINAL)
 		{
-			final_q = true;
+			_qualities[_final_index] = true;
 		}
 		else if (*it == enumerations::symbol_quality::STATIC)
 		{
-			static_q = true;
+			_qualities[_static_index] = true;
 		}
 		else if (*it == enumerations::symbol_quality::DYNAMIC)
 		{
-			dynamic_q = true;
+			_qualities[_dynamic_index] = true;
 		}
 		else if (*it == enumerations::symbol_quality::SIGNED)
 		{
-			signed_q = true;
+			_qualities[_signed_index] = true;
 		}
 		else if (*it == enumerations::symbol_quality::UNSIGNED)
 		{
-			signed_q = false;
-            _listed_unsigned = true;
+			_qualities[_signed_index] = false;
+            _qualities[_listed_unsigned_index] = true;
 		}
 		else if (*it == enumerations::symbol_quality::EXTERN) {
-			extern_q = true;
+			_qualities[_extern_index] = true;
 		}
         else if (*it == enumerations::symbol_quality::UNMANAGED) {
-            _managed = false;
+            _qualities[_managed_index] = false;
         }
 		else {
 			continue;
@@ -193,50 +222,57 @@ symbol_qualities::symbol_qualities(std::vector<enumerations::symbol_quality> qua
 	}
 }
 
-symbol_qualities::symbol_qualities(bool is_const, bool is_static, bool is_dynamic, bool is_signed, bool is_long, bool is_short, bool is_extern) :
-	const_q(is_const),
-	static_q(is_static),
-	dynamic_q(is_dynamic),
-	signed_q(is_signed),
-	long_q(is_long),
-	short_q(is_short),
-	extern_q(is_extern)
+symbol_qualities::symbol_qualities(	bool is_const,
+									bool is_static,
+									bool is_dynamic,
+									bool is_signed,
+									bool is_long,
+									bool is_short,
+									bool is_extern	)
+	: symbol_qualities()
 {
+	_qualities[_const_index] = is_const;
+	_qualities[_static_index] = is_static;
+	_qualities[_dynamic_index] = is_dynamic;
+	_qualities[_signed_index] = is_signed;
+	_qualities[_long_index] = is_long;
+	_qualities[_short_index] = is_short;
+	_qualities[_extern_index] = is_extern;
+
 	// const will always win out over dynamic (can be 'static const')
-	if (this->const_q) {
-		this->dynamic_q = false;
+	if (this->_qualities[_const_index]) {
+		this->_qualities[_dynamic_index] = false;
 	}
-	this->final_q = false;
+	this->_qualities[_final_index] = false;
 
 	// if both long and short are set, generate a warning
-	if (this->long_q && this->short_q) {
+	if (this->_qualities[_long_index] && this->_qualities[_short_index]) {
 		// todo: warning
 		std::cerr << "Warning: 'long' and 'short' both used as qualifiers; this amounts to a regular integer" << std::endl;
 
 		// delete both qualities
-		this->long_q = false;
-		this->short_q = false;
+		this->_qualities[_long_index] = false;
+		this->_qualities[_short_index] = false;
 	}
 
-    this->_managed = true;
+    this->_qualities[_managed_index] = true;
 }
+
+symbol_qualities::symbol_qualities(const symbol_qualities& other)
+	: _qualities(other._qualities) {}
 
 symbol_qualities::symbol_qualities()
 {
-	const_q = false;
-	final_q = false;
-	static_q = false;
-	dynamic_q = false;
-	signed_q = false;
-	long_q = false;
-	short_q = false;
-	extern_q = false;
-
-    _listed_unsigned = false;
-    _managed = true;
+	_qualities[_const_index] = false;
+	_qualities[_final_index] = false;
+	_qualities[_static_index] = false;
+	_qualities[_dynamic_index] = false;
+	_qualities[_signed_index] = false;
+	_qualities[_long_index] = false;
+	_qualities[_short_index] = false;
+	_qualities[_extern_index] = false;
+    _qualities[_listed_unsigned_index] = false;
+    _qualities[_managed_index] = true;
 }
 
-symbol_qualities::~symbol_qualities()
-{
-
-}
+symbol_qualities::~symbol_qualities() { }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace statement
 {
@@ -16,8 +17,7 @@ class cgen
     bool _strict;
     bool _micro;
 
-    std::string _current_scope_name;
-    size_t _current_scope_level;
+    std::vector<std::string> _scope;
 
     bool next();
 

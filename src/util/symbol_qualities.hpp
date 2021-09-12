@@ -1,30 +1,31 @@
 #pragma once
 
-#include <unordered_map>
 #include <vector>
 #include <string>
+#include <array>
+#include <unordered_map>
 
 #include "enumerated_types.hpp"
 #include "exceptions.hpp"
 
 class symbol_qualities
 {
-	bool const_q;	// our qualities -- since almost all of these are reserved in C++, suffix with _q, for "quality"
-	bool final_q;
-	bool static_q;
-	bool dynamic_q;
-	bool signed_q;
-    bool _listed_unsigned;
-	bool long_q;
-	bool short_q;
-	bool extern_q;
-    bool _managed;
+	static constexpr std::array<char, 10> _decorations{
+		'c', 'f', 'a', 'd', 'g', 'l', 's', 'e', 'u', 'm'
+	};
+	std::array<bool, _decorations.size()> _qualities;
 
-	// function qualities -- for calling conventions, unused by other data
-	// todo: create additional, inherited class 'function_symbol_qualities' to use with functions?
-	bool sincall_con;
-	bool c64_con;
-	bool windows_con;
+	static constexpr size_t _const_index{0};
+	static constexpr size_t _final_index{1};
+	static constexpr size_t _static_index{2};
+	static constexpr size_t _dynamic_index{3};
+	static constexpr size_t _signed_index{4};
+	static constexpr size_t _listed_unsigned_index{5};
+	static constexpr size_t _long_index{6};
+	static constexpr size_t _short_index{7};
+	static constexpr size_t _extern_index{8};
+	static constexpr size_t _managed_index{9};
+
 public:
 	bool operator==(const symbol_qualities& right) const;
 	bool operator!=(const symbol_qualities& right) const;
@@ -44,9 +45,10 @@ public:
 
     bool has_sign_quality() const;
 
-	// void add_qualities(std::vector<enumerations::symbol_quality> to_add);
 	void add_qualities(symbol_qualities to_add);
     void add_quality(enumerations::symbol_quality to_add);
+
+	std::string decorate() const; 
 
 	symbol_qualities(std::vector<enumerations::symbol_quality> qualities);
 	symbol_qualities(	bool is_const, 
@@ -56,6 +58,7 @@ public:
 						bool is_long = false, 
 						bool is_short = false, 
 						bool is_extern = false	);
+	symbol_qualities(const symbol_qualities& other);
 	symbol_qualities();
 	~symbol_qualities();
 };

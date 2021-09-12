@@ -38,7 +38,7 @@ It also sort of explains why I am serializing the generated code into assembly o
 
 ### Installation / Build
 
-Note that this project requires at least C++ 14. Else, certain STL features will fail -- specifically, `std::unordered_map` cannot be used with enumerated types because no hash function is given by the C++11 STL. If you absolutely have to compile with C++11, you will need to provide these hash functions.
+Note that this project requires compilers for C++17 and C99.
 
 ### The SRE
 

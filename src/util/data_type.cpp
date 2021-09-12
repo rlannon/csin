@@ -1,5 +1,26 @@
 #include "data_type.hpp"
 
+#include <sstream>
+
+const std::vector<
+    std::pair<
+        const enumerations::primitive_type,
+        const std::string
+    >
+> data_type::_type_strings {
+    std::make_pair<>(enumerations::primitive_type::INT, "i"),
+    std::make_pair<>(enumerations::primitive_type::FLOAT, "f"),
+    std::make_pair<>(enumerations::primitive_type::ARRAY, "a"),
+    std::make_pair<>(enumerations::primitive_type::BOOL, "b"),
+    std::make_pair<>(enumerations::primitive_type::CHAR, "c"),
+    std::make_pair<>(enumerations::primitive_type::PTR, "p"),
+    std::make_pair<>(enumerations::primitive_type::REFERENCE, "r"),
+    std::make_pair<>(enumerations::primitive_type::STRING, "s"),
+    std::make_pair<>(enumerations::primitive_type::STRUCT, "u"),
+    std::make_pair<>(enumerations::primitive_type::TUPLE, "t"),
+    std::make_pair<>(enumerations::primitive_type::VOID, "v")
+};
+
 void data_type::set_width()
 {
 	// All other types have different widths
@@ -414,6 +435,48 @@ bool data_type::must_initialize() const {
 
 bool data_type::must_free() const {
     return this->_must_free;
+}
+
+std::string data_type::decorate() const
+{
+	std::stringstream decorated;
+
+	auto it = _type_strings.find(primary);
+	if (it == _type_strings.end())
+	{
+		throw error::type_error(0);
+	}
+
+	decorated << it->second;
+	if (primary == enumerations::primitive_type::STRUCT)
+	{
+		decorated << "?" << struct_name << "?";
+	}
+
+	decorated << qualities.decorate();
+
+	if (primary == enumerations::primitive_type::ARRAY)
+	{
+		decorated << ":" << array_length;
+	}
+	else if (primary == enumerations::primitive_type::TUPLE)
+	{
+		decorated << ":" << contained_types.size();
+	}
+
+	bool first = true;
+	for (const auto& contained: contained_types)
+	{
+		if (first)
+		{
+			decorated << "&";
+			first = false;
+		}
+
+		decorated << contained.decorate();
+	}
+
+	return decorated.str();
 }
 
 data_type::data_type

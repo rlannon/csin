@@ -8,9 +8,7 @@
 cgen::cgen(bool allow_unsafe, bool use_strict, bool use_micro)
     : _unsafe(allow_unsafe)
     , _strict(use_strict)
-    , _micro(use_micro)
-    , _current_scope_name("global")
-    , _current_scope_level(0) { }
+    , _micro(use_micro) { }
 
 cgen::~cgen() { }
 
