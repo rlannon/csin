@@ -10,7 +10,7 @@
 
 class symbol_qualities
 {
-	static constexpr std::array<char, 10> _decorations{
+	static constexpr std::array<char, 10> _decorations {
 		'c', 'f', 'a', 'd', 'g', 'l', 's', 'e', 'u', 'm'
 	};
 	std::array<bool, _decorations.size()> _qualities;

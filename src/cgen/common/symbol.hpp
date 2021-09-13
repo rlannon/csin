@@ -47,10 +47,16 @@ protected:
     bool _freed;
 
 public:
+    /**
+     * Generates the decorated name for a symbol with a given name, scope, and type.
+     */
     static std::string decorate(const std::string& name,
                                 const std::vector<std::string>& scope, 
                                 const data_type& type);
-    static std::string decorate(const symbol& sym);
+    static std::string decorate(const symbol& sym)
+    {
+        return decorate(sym.get_name(), sym.get_scope(), sym.get_type());
+    }
 
     bool operator==(const symbol& right) const;
     bool operator!=(const symbol& right) const
@@ -64,19 +70,15 @@ public:
 
     const std::string& get_name() const { return _name; }
 
-    const std::string& get_scope_name() const
+    const std::vector<std::string>& get_scope() const
     {
-        return _scope_name;
+        return _scope;
     }
 
-    size_t get_scope_level() const { return _scope_level; }
-
-    bool is_accessible_from(const std::string& scope_name,
-                            const size_t scope_level) const noexcept
-    {
-        return  _scope_level == scope_level &&
-                _scope_name == scope_name;
-    }
+    /**
+     * Checks whether this symbol is accessible from scope `other`.
+     */
+    bool is_accessible_from(const std::vector<std::string>& other) const noexcept;
 
     const data_type& get_type() const { return _type; }
 
@@ -93,8 +95,7 @@ public:
     symbol& operator=(symbol&& other) = default;
 
     symbol( const std::string& name,
-            const std::string& scope_name,
-            const size_t scope_level,
+            const std::vector<std::string>& scope,
             const data_type& type,
             const bool defined=true,
             const size_t line_defined=0 );

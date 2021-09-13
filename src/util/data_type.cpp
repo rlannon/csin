@@ -2,11 +2,9 @@
 
 #include <sstream>
 
-const std::vector<
-    std::pair<
-        const enumerations::primitive_type,
-        const std::string
-    >
+const std::unordered_map<
+	const enumerations::primitive_type,
+	const std::string
 > data_type::_type_strings {
     std::make_pair<>(enumerations::primitive_type::INT, "i"),
     std::make_pair<>(enumerations::primitive_type::FLOAT, "f"),
