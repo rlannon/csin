@@ -105,6 +105,14 @@ public:
 	 * would generate `tf:3i&i&fl`.
 	 */
 	std::string decorate() const;
+	/**
+	 * Gets the encoding for the primary type.
+	 */
+	std::string encode_primary() const;
+	/**
+	 * Gets the type used in the generated C for the current type.
+	 */
+	std::string get_c_typename();
 
     data_type(	enumerations::primitive_type primary, 
 				data_type subtype, 

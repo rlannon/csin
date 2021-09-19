@@ -439,19 +439,11 @@ std::string data_type::decorate() const
 {
 	std::stringstream decorated;
 
-	auto it = _type_strings.find(primary);
-	if (it == _type_strings.end())
-	{
-		throw error::type_error(0);
-	}
-
-	decorated << it->second;
+	decorated << encode_primary();
 	if (primary == enumerations::primitive_type::STRUCT)
 	{
 		decorated << "?" << struct_name << "?";
 	}
-
-	decorated << qualities.decorate();
 
 	if (primary == enumerations::primitive_type::ARRAY)
 	{
@@ -475,6 +467,150 @@ std::string data_type::decorate() const
 	}
 
 	return decorated.str();
+}
+
+std::string data_type::encode_primary()
+{
+	std::stringstream encoded;
+
+	auto it = _type_strings.find(primary);
+	if (it == _type_strings.end())
+	{
+		throw error::type_error(0);
+	}
+
+	encoded << it->second;
+	encoded << qualities.decorate();
+
+	return encoded.str();
+}
+
+std::string data_type::get_c_typename(const data_type& t)
+{
+    std::string type_string;
+
+    switch (primary)
+    {
+        case INT:
+        {
+            if (qualities.is_unsigned())
+            {
+                type_string = "u";
+            }
+
+            if (qualities.is_long())
+            {
+                type_string += "int64_t";
+            }
+            else if (qualities.is_short())
+            {
+                type_string += "int16_t";
+            }
+            else
+            {
+                type_string += "int32_t";
+            }
+
+            break;
+        }
+        case FLOAT:
+        {
+            if (qualities.is_long())
+            {
+                type_string = "double";
+            }
+            else
+            {
+                type_string = "float";
+            }
+
+            break;
+        }
+        case STRING:
+        {
+            type_string = constants::STRING_BASE;
+            break;
+        }
+        case BOOL:
+        {
+            type_string = "bool";
+            break;
+        }
+        case VOID:
+        {
+            type_string = "void";
+            break;
+        }
+        case PTR:
+        {
+            if (contained_types.size())
+            {
+                type_string = get_c_typename(contained_types[0]) + "*";
+            }
+            else
+            {
+                throw error::type_error(0);
+            }
+
+            break;
+        }
+        case REFERENCE:
+        {
+            if (contained_types.size())
+            {
+                type_string = get_c_typename(contained_types[0]) + "*";
+            }
+            else
+            {
+                throw error::type_error(0);
+            }
+
+            break;
+        }
+        case ARRAY:
+        {
+            if (contained_types.size())
+            {
+                type_string = get_c_typename(contained_types[0]) + "[]";
+            }
+            else
+            {
+                throw error::type_error(0);
+            }
+
+            break;
+        }
+        case STRUCT:
+        {
+            type_string = struct_name;
+            break;
+        }
+        case TUPLE:
+        {
+            type_string = constants::TUPLE_BASE;
+            for (const auto& subtype: contained_types)
+            {
+                type_string += subtype.decorate();
+            }
+
+            break;
+        }
+        default
+        {
+            throw error::type_error(0);
+            break;
+        }
+    }
+
+    if (qualities.is_const() || qualities.is_final())
+    {
+        type_string += " const";
+    }
+	
+	if (qualities.is_dynamic())
+	{
+		type_string += " *";
+	}
 }
 
 data_type::data_type

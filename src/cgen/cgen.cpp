@@ -24,6 +24,7 @@ void cgen::process_statement(const statement::statement_base& s)
         case s_type::ALLOCATION:
         {
             const allocation& alloc(dynamic_cast<const allocation&>(s));
+            _text << gen_allocation(alloc);
             break;
         }
         case s_type::ASSIGNMENT:

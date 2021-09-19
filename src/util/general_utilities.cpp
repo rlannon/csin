@@ -1,5 +1,7 @@
 #include "general_utilities.hpp"
 #include "enumerated_types.hpp"
+#include "exceptions.h"
+#include "constants.hpp"
 
 bool general_utilities::returns(const statement::statement_block& to_check) {
 	if (to_check.has_return) {
