@@ -117,13 +117,13 @@ namespace error
 	class quality_conflict : public compiler_exception
 	{
 	public:
-		explicit quality_conflict(std::string &conflicting_quality, unsigned int line);
+		explicit quality_conflict(const std::string& conflicting_quality, unsigned int line);
 	};
 
 	class illegal_quality : public compiler_exception
 	{
 	public:
-		explicit illegal_quality(std::string &offending_quality, unsigned int &line);
+		explicit illegal_quality(const std::string& offending_quality, unsigned int line);
 	};
 
 	class invalid_type : public compiler_exception
@@ -222,37 +222,37 @@ namespace error
 	class incomplete_type : public compiler_exception
 	{
 	public:
-		explicit incomplete_type(const unsigned int &line);
+		explicit incomplete_type(const unsigned int line);
 	};
 
 	class expected_semicolon : public compiler_exception
 	{
 	public:
-		explicit expected_semicolon(const unsigned int &line);
+		explicit expected_semicolon(const unsigned int line);
 	};
 
 	class missing_identifier : public compiler_exception
 	{
 	public:
-		explicit missing_identifier(const unsigned int &line);
+		explicit missing_identifier(const unsigned int line);
 	};
 
 	class imbalanced_grouping : public compiler_exception
 	{
 	public:
-		explicit imbalanced_grouping(const unsigned int &line);
+		explicit imbalanced_grouping(const unsigned int line);
 	};
 
 	class unexpected_keyword : public compiler_exception
 	{
 	public:
-		explicit unexpected_keyword(std::string &offending_keyword, const unsigned int &line);
+		explicit unexpected_keyword(const std::string& offending_keyword, const unsigned int line);
 	};
 
 	class invalid_call_syntax : public compiler_exception
 	{
 	public:
-		explicit invalid_call_syntax(const unsigned int &line);
+		explicit invalid_call_syntax(const unsigned int line);
 	};
 
 	// like in the compiler, we sometimes want to print warnings without stopping parsing

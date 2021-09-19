@@ -33,7 +33,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/util/%.cpp
 $(OBJ_DIR)/%.o: $(SRC_DIR)/compile/%.cpp
 	$(cc) $(flags) -c -o $@ $<
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/compile/compile_util/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/compile/generators/%.cpp
+	$(cc) $(flags) -c -o $@ $<
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/compile/common/%.cpp
 	$(cc) $(flags) -c -o $@ $<
 
 clean:

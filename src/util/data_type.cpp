@@ -1,5 +1,24 @@
 #include "data_type.hpp"
 
+#include <sstream>
+
+const std::unordered_map<
+	const enumerations::primitive_type,
+	const std::string
+> data_type::_type_strings {
+    std::make_pair<>(enumerations::primitive_type::INT, "i"),
+    std::make_pair<>(enumerations::primitive_type::FLOAT, "f"),
+    std::make_pair<>(enumerations::primitive_type::ARRAY, "a"),
+    std::make_pair<>(enumerations::primitive_type::BOOL, "b"),
+    std::make_pair<>(enumerations::primitive_type::CHAR, "c"),
+    std::make_pair<>(enumerations::primitive_type::PTR, "p"),
+    std::make_pair<>(enumerations::primitive_type::REFERENCE, "r"),
+    std::make_pair<>(enumerations::primitive_type::STRING, "s"),
+    std::make_pair<>(enumerations::primitive_type::STRUCT, "u"),
+    std::make_pair<>(enumerations::primitive_type::TUPLE, "t"),
+    std::make_pair<>(enumerations::primitive_type::VOID, "v")
+};
+
 void data_type::set_width()
 {
 	// All other types have different widths
@@ -414,6 +433,186 @@ bool data_type::must_initialize() const {
 
 bool data_type::must_free() const {
     return this->_must_free;
+}
+
+std::string data_type::decorate() const
+{
+	std::stringstream decorated;
+
+	decorated << encode_primary();
+	if (primary == enumerations::primitive_type::STRUCT)
+	{
+		decorated << "?" << struct_name << "?";
+	}
+
+	if (primary == enumerations::primitive_type::ARRAY)
+	{
+		decorated << ":" << array_length;
+	}
+	else if (primary == enumerations::primitive_type::TUPLE)
+	{
+		decorated << ":" << contained_types.size();
+	}
+
+	bool first = true;
+	for (const auto& contained: contained_types)
+	{
+		if (first)
+		{
+			decorated << "&";
+			first = false;
+		}
+
+		decorated << contained.decorate();
+	}
+
+	return decorated.str();
+}
+
+std::string data_type::encode_primary() const
+{
+	std::stringstream encoded;
+
+	auto it = _type_strings.find(primary);
+	if (it == _type_strings.end())
+	{
+		throw error::type_error(0);
+	}
+
+	encoded << it->second;
+	encoded << qualities.decorate();
+
+	return encoded.str();
+}
+
+std::string data_type::get_c_typename() const
+{
+    using enumerations::primitive_type;
+	using namespace general_utilities;
+
+	std::string type_string;
+
+    switch (primary)
+    {
+        case primitive_type::INT:
+        {
+            if (qualities.is_unsigned())
+            {
+                type_string = "u";
+            }
+
+            if (qualities.is_long())
+            {
+                type_string += "int64_t";
+            }
+            else if (qualities.is_short())
+            {
+                type_string += "int16_t";
+            }
+            else
+            {
+                type_string += "int32_t";
+            }
+
+            break;
+        }
+        case primitive_type::FLOAT:
+        {
+            if (qualities.is_long())
+            {
+                type_string = "double";
+            }
+            else
+            {
+                type_string = "float";
+            }
+
+            break;
+        }
+        case primitive_type::STRING:
+        {
+            type_string = constants::STRING_BASE;
+            break;
+        }
+        case primitive_type::BOOL:
+        {
+            type_string = "bool";
+            break;
+        }
+        case primitive_type::VOID:
+        {
+            type_string = "void";
+            break;
+        }
+        case primitive_type::PTR:
+        {
+            if (contained_types.size())
+            {
+                type_string = contained_types[0].get_c_typename() + "*";
+            }
+            else
+            {
+                throw error::type_error(0);
+            }
+
+            break;
+        }
+        case primitive_type::REFERENCE:
+        {
+            if (contained_types.size())
+            {
+                type_string = contained_types[0].get_c_typename() + "*";
+            }
+            else
+            {
+                throw error::type_error(0);
+            }
+
+            break;
+        }
+        case primitive_type::ARRAY:
+        {
+            if (contained_types.size())
+            {
+                type_string = contained_types[0].get_c_typename() + "[]";
+            }
+            else
+            {
+                throw error::type_error(0);
+            }
+
+            break;
+        }
+        case primitive_type::STRUCT:
+        {
+            type_string = struct_name;
+            break;
+        }
+        case primitive_type::TUPLE:
+        {
+            type_string = constants::TUPLE_BASE;
+            for (const auto& subtype: contained_types)
+            {
+                type_string += subtype.decorate();
+            }
+
+            break;
+        }
+        default:
+        {
+            throw error::type_error(0);
+        }
+    }
+
+    if (qualities.is_const() || qualities.is_final())
+    {
+        type_string += " const";
+    }
+	
+	if (qualities.is_dynamic())
+	{
+		type_string += " *";
+	}
 }
 
 data_type::data_type

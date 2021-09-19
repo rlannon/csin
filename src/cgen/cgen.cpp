@@ -8,9 +8,7 @@
 cgen::cgen(bool allow_unsafe, bool use_strict, bool use_micro)
     : _unsafe(allow_unsafe)
     , _strict(use_strict)
-    , _micro(use_micro)
-    , _current_scope_name("global")
-    , _current_scope_level(0) { }
+    , _micro(use_micro) { }
 
 cgen::~cgen() { }
 
@@ -26,6 +24,7 @@ void cgen::process_statement(const statement::statement_base& s)
         case s_type::ALLOCATION:
         {
             const allocation& alloc(dynamic_cast<const allocation&>(s));
+            _text << gen_allocation(alloc);
             break;
         }
         case s_type::ASSIGNMENT:
