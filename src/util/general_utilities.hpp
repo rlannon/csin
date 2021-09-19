@@ -2,7 +2,6 @@
 
 #include "../parser/statements.hpp"
 
-
 namespace general_utilities {
     const int BASE_PARAMETER_OFFSET = 16;
 

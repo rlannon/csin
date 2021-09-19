@@ -469,7 +469,7 @@ std::string data_type::decorate() const
 	return decorated.str();
 }
 
-std::string data_type::encode_primary()
+std::string data_type::encode_primary() const
 {
 	std::stringstream encoded;
 
@@ -485,13 +485,16 @@ std::string data_type::encode_primary()
 	return encoded.str();
 }
 
-std::string data_type::get_c_typename(const data_type& t)
+std::string data_type::get_c_typename() const
 {
-    std::string type_string;
+    using enumerations::primitive_type;
+	using namespace general_utilities;
+
+	std::string type_string;
 
     switch (primary)
     {
-        case INT:
+        case primitive_type::INT:
         {
             if (qualities.is_unsigned())
             {
@@ -513,7 +516,7 @@ std::string data_type::get_c_typename(const data_type& t)
 
             break;
         }
-        case FLOAT:
+        case primitive_type::FLOAT:
         {
             if (qualities.is_long())
             {
@@ -526,26 +529,26 @@ std::string data_type::get_c_typename(const data_type& t)
 
             break;
         }
-        case STRING:
+        case primitive_type::STRING:
         {
             type_string = constants::STRING_BASE;
             break;
         }
-        case BOOL:
+        case primitive_type::BOOL:
         {
             type_string = "bool";
             break;
         }
-        case VOID:
+        case primitive_type::VOID:
         {
             type_string = "void";
             break;
         }
-        case PTR:
+        case primitive_type::PTR:
         {
             if (contained_types.size())
             {
-                type_string = get_c_typename(contained_types[0]) + "*";
+                type_string = contained_types[0].get_c_typename() + "*";
             }
             else
             {
@@ -554,11 +557,11 @@ std::string data_type::get_c_typename(const data_type& t)
 
             break;
         }
-        case REFERENCE:
+        case primitive_type::REFERENCE:
         {
             if (contained_types.size())
             {
-                type_string = get_c_typename(contained_types[0]) + "*";
+                type_string = contained_types[0].get_c_typename() + "*";
             }
             else
             {
@@ -567,11 +570,11 @@ std::string data_type::get_c_typename(const data_type& t)
 
             break;
         }
-        case ARRAY:
+        case primitive_type::ARRAY:
         {
             if (contained_types.size())
             {
-                type_string = get_c_typename(contained_types[0]) + "[]";
+                type_string = contained_types[0].get_c_typename() + "[]";
             }
             else
             {
@@ -580,12 +583,12 @@ std::string data_type::get_c_typename(const data_type& t)
 
             break;
         }
-        case STRUCT:
+        case primitive_type::STRUCT:
         {
             type_string = struct_name;
             break;
         }
-        case TUPLE:
+        case primitive_type::TUPLE:
         {
             type_string = constants::TUPLE_BASE;
             for (const auto& subtype: contained_types)
@@ -595,10 +598,9 @@ std::string data_type::get_c_typename(const data_type& t)
 
             break;
         }
-        default
+        default:
         {
             throw error::type_error(0);
-            break;
         }
     }
 

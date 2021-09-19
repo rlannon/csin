@@ -11,6 +11,7 @@
 #include "exceptions.hpp"
 #include "symbol_qualities.hpp"
 #include "../parser/expression/expression.hpp"
+#include "constants.hpp"
 
 class data_type
 {
@@ -112,7 +113,7 @@ public:
 	/**
 	 * Gets the type used in the generated C for the current type.
 	 */
-	std::string get_c_typename();
+	std::string get_c_typename() const;
 
     data_type(	enumerations::primitive_type primary, 
 				data_type subtype, 

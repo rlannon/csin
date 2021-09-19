@@ -287,28 +287,22 @@ namespace error
 		// super called
 	}
 
-	expected_semicolon::expected_semicolon(const unsigned int& line) : error::compiler_exception("Syntax error; expected ';'", error_code::MISSING_SEMICOLON_ERROR, line) {
-
-	}
+	expected_semicolon::expected_semicolon(const unsigned int line)
+		: error::compiler_exception("Syntax error; expected ';'", error_code::MISSING_SEMICOLON_ERROR, line) { }
 
 	missing_identifier::missing_identifier(const unsigned int line) :
 	error::compiler_exception(
 		"Expected identifier",
 		error_code::MISSING_IDENTIFIER_ERROR,
 		line
-	) {
-		// super called
-	}
+	) { }
 
 	unexpected_keyword::unexpected_keyword(const std::string& offending_keyword, const unsigned int line) :
 		error::compiler_exception(
 			("Unexpected keyword '" + offending_keyword + "'"),
 			error_code::UNEXPECTED_KEYWORD_ERROR,
 			line
-		)
-	{
-		// Used when a keyword is found, but one is not expected
-	}
+		) { }
 
 	imbalanced_grouping::imbalanced_grouping(const unsigned int line) :
 	error::compiler_exception(
